@@ -1,6 +1,7 @@
-
+PerlinMaker3D pm = new PerlinMaker3D(4, 4, 4, 44100);
 void setup() {
   size(1024, 1024);
+  
   PImage offscreen = createImage(4096, 4096, RGB);
   //
   int stepCount = 256;
@@ -34,7 +35,7 @@ void noiseInRange(PImage image, int startX, int startY, int endX, int endY, floa
     for(int y = startY; y < endY; y++){
       float localX = (x - startX) / ((float)(endX - startX) / 4.0f);
       float localY = (y - startY) / ((float)(endY - startY) / 4.0f);
-      float noiseVal = noise(localX, localY, z);
+      float noiseVal = pm.noise(localX, localY, z);//noise(localX, localY, z);
       int pColor = (int)floor(noiseVal * 256);
       image.pixels[y * imageWidth + x] = color(pColor);
     }
