@@ -2,18 +2,43 @@
 class NoiseMaker3D{
   int scale = 1;
   float seed = 1.661;
+  boolean flipped = false;
   protected String name = "Generic";
+  
+  public NoiseMaker3D(){
+    
+  }
+  
   public NoiseMaker3D(int scale, float seed){
     this.scale = scale;
     this.seed = seed;
+  }
+  
+  public NoiseMaker3D setScale(int scale){
+    this.scale = scale;
+    return this;
+  }
+  
+  public NoiseMaker3D setSeed(float seed){
+    this.seed = seed;
+    return this;
+  }
+  
+  public NoiseMaker3D setFlipped(boolean flipped){
+    this.flipped = flipped;
+    return this;
   }
   
   public String getMakerName(){
     return this.name;
   }
   
-  public void initialize(){
-    
+  public String getMakerShortHand(){
+    return "" + name.charAt(0);
+  }
+  
+  public NoiseMaker3D initialize(){
+    return this;
   }
   
   public float noise(float x, float y, float z){

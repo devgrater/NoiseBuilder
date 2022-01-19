@@ -1,23 +1,29 @@
 class VoronoiMaker3D extends NoiseMaker3D{
+  
   private ArrayList<PVector> pointCloud;
+  
+  public VoronoiMaker3D(){
+    
+  }
+  
   public VoronoiMaker3D(int scale, float seed){
     super(scale, seed);
-    this.name = "Simplex";
     initialize();
   }
   
   @Override
-  public void initialize(){
+  public NoiseMaker3D initialize(){
+    this.name = "Voronoi";
     pointCloud = new ArrayList<>(); 
     for(int i = 0; i < scale; i++){
       for(int j = 0; j < scale; j++){
         for(int k = 0; k < scale; k++){
           PVector scatter = getRandomScatter(i, j, k);
-          print(scatter);
           pointCloud.add(scatter);
         }
       }
     }
+    return this;
   }
   
   private PVector getNoiseAt(int x, int y, int z){
@@ -55,15 +61,17 @@ class VoronoiMaker3D extends NoiseMaker3D{
       for(int yId = fy; yId <= cy; yId += 1){
         for(int zId = fz; zId <= cz; zId += 1){
           PVector offset = new PVector(xId, yId, zId).add(getNoiseAt(xId, yId, zId)).sub(new PVector(x, y, z));
-          PVector testPoint = new PVector(xId, yId, zId).add(getNoiseAt(xId, yId, zId));
-          if((floor(testPoint.x) > xId) || (floor(testPoint.y) > yId) || (floor(testPoint.z) > zId)){
-             print("warning");
-          }
           minDistance = min(offset.mag(), minDistance);
         }
       }
     }
-    return minDistance;
+    if(this.flipped){
+      return 1 - minDistance;
+    }
+    else{
+      return minDistance;
+    }
+    
   }
   
   private PVector getRandomScatter(int x, int y, int z){

@@ -2,21 +2,31 @@
 class PerlinMaker3D extends NoiseMaker3D{
 
   
-  ArrayList<PVector> gridVecs = new ArrayList<>();
+  ArrayList<PVector> gridVecs;
   
   public PerlinMaker3D(){
-    super(1, 13165.11f);
     this.name = "Perlin";
   }
     
   public PerlinMaker3D(int scale, float seed){
     super(scale, seed);
-    this.name = "Perlin";
+    
   }
   
   @Override
-  public void initialize(){
+  public NoiseMaker3D initialize(){
+    this.name = "Perlin";
+    gridVecs = new ArrayList<>();
     //precompute because there is sooo many repetitive data...
+    for(int i = 0; i < scale; i++){
+      for(int j = 0; j < scale; j++){
+        for(int k = 0; k < scale; k++){
+          PVector direction = sphereVector(i, j, k);
+          gridVecs.add(direction);
+        }
+      }
+    }
+    return this;
   }
   /*
   private float interpolate(float a0, float a1, float w){
@@ -58,7 +68,6 @@ class PerlinMaker3D extends NoiseMaker3D{
    
     //remember that this hasen't been normalized
     //so you can essentially just do 1-x to flip the direction
-    PVector pos = new PVector(x, y, z);
      
     //whatever you do....
     //compute gradient relative to fx, fy, fz
@@ -90,7 +99,24 @@ class PerlinMaker3D extends NoiseMaker3D{
     float gradCYCZ = interpolate(gradFXCYCZ, gradCXCYCZ, interpX);
     float gradCZ = interpolate(gradFYCZ, gradCYCZ, interpY);
     
-    return (interpolate(gradFZ, gradCZ, interpZ) + 1.0) / 2.0f;
+    float result = (interpolate(gradFZ, gradCZ, interpZ) + 1.0) / 2.0f;
+    if(this.flipped){
+      return 1 - result;
+    }
+    else{
+      return result;
+    }
+  }
+  
+  private PVector getNoiseAt(int x, int y, int z){
+    //wrap around if that happens
+    x = (x + this.scale) % this.scale;
+    y = (y + this.scale) % this.scale;
+    z = (z + this.scale) % this.scale;
+    //retrieve data:
+    
+    int index = x * this.scale * this.scale + y * this.scale + z;
+    return gridVecs.get(index);
   }
   
   
@@ -102,7 +128,8 @@ class PerlinMaker3D extends NoiseMaker3D{
     
     //then....
     //get a sphereVector!
-    PVector sphere = sphereVector(x % this.scale, y % this.scale, z % this.scale);
+    //PVector sphere = sphereVector(x % this.scale, y % this.scale, z % this.scale);
+    PVector sphere = getNoiseAt(x, y, z);
     
     return fx * sphere.x + fy * sphere.y + fz * sphere.z;
   }

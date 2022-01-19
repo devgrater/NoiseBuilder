@@ -2,9 +2,15 @@ final int SCREEN_SIZE = 1024;
 //final int STEP_COUNT = 256; //default: 256 steps
 final int LAYER_SIZE = 256; //default: 256
 final int ATLAS_DIMENSION = 4096;
-final int GRID_SIZE = 4;
+final int GRID_SIZE = 8;
 //16 means 16 points, per noise grid.
-NoiseMaker3D pm = new VoronoiMaker3D(GRID_SIZE, 44101);
+NoiseMaker3D pm = new NoiseMakerComposite()
+  .add(new VoronoiMaker3D().setScale(3).setSeed(1212.1).setFlipped(true).initialize())
+  .add(new VoronoiMaker3D().setScale(5).setSeed(24212.1).setFlipped(true).initialize())
+  .add(new VoronoiMaker3D().setScale(7).setSeed(24212.1).setFlipped(true).initialize())
+  .add(new PerlinMaker3D().setScale(9).setSeed(4412.1).initialize())
+  .add(new PerlinMaker3D().setScale(14).setSeed(12132.1).initialize())
+  .add(new PerlinMaker3D().setScale(20).setSeed(1232.1).initialize());
 
 int step_val;
 int drawHeadX = 0;
@@ -28,7 +34,7 @@ void draw(){
   if(step_val >= STEP_COUNT){
     //stop drawing!
     if(!hasStopped){
-      offscreen.save("noise3D" + "_" + GRID_SIZE + ".png");
+      offscreen.save(pm.getMakerName() + "3D" + "_" + GRID_SIZE + ".png");
       hasStopped = true;
     }
   }
@@ -46,7 +52,7 @@ void draw(){
       drawHeadX = 0;
     }
     offscreen.updatePixels();
-    image(offscreen, 0, 0, 1024, 1024);
+    image(offscreen, 0, 0, SCREEN_SIZE, SCREEN_SIZE);
   }
   step_val += 1;
   
