@@ -1,23 +1,22 @@
 
-class PerlinMaker3D{
-  float lrX = 1.0;
-  float lrY = 1.0;
-  float lrZ = 1.0;
-  int scale = 1;
-  float seed = 1.661;
+class PerlinMaker3D extends NoiseMaker3D{
+
   
-  //ArrayList<PVector> gridPoints = new ArrayList<>();
+  ArrayList<PVector> gridVecs = new ArrayList<>();
   
   public PerlinMaker3D(){
-    
+    super(1, 13165.11f);
+    this.name = "Perlin";
   }
     
-  public PerlinMaker3D(float lrX, float lrY, float lrZ, int scale, float seed){
-    this.lrX = lrX;
-    this.lrY = lrY;
-    this.lrZ = lrZ;
-    this.scale = scale;
-    this.seed = seed;
+  public PerlinMaker3D(int scale, float seed){
+    super(scale, seed);
+    this.name = "Perlin";
+  }
+  
+  @Override
+  public void initialize(){
+    //precompute because there is sooo many repetitive data...
   }
   /*
   private float interpolate(float a0, float a1, float w){
@@ -32,7 +31,7 @@ class PerlinMaker3D{
     return ((w * (w * 6.0f - 15.0f) + 10.0f) * w * w * w);
   }
   
-  
+  @Override
   public float noise(float x, float y, float z){
     float loopX = x * this.scale;
     float loopY = y * this.scale;
@@ -94,17 +93,6 @@ class PerlinMaker3D{
     return (interpolate(gradFZ, gradCZ, interpZ) + 1.0) / 2.0f;
   }
   
-  private float frac(float input){
-    return input - floor(input);
-  }
-  
-  private float dot(float x, float y, float z, float x2, float y2, float z2){
-    return x * x2 + y * y2 + z * z2;
-  }
-  
-  private float dot(float x, float y, float x2, float y2){
-    return x * x2 + y * y2;
-  }
   
   
   public float noiseFunction(float px, float py, float pz, int x, int y, int z){
@@ -153,17 +141,7 @@ class PerlinMaker3D{
   }
   
     
-  public float noiseFunction(float x, float y){
-    //lets just start with a random color.
-    float rnd = frac(sin(dot(x, y, 12.9898f, 78.233f)) * (43758.5453123f + seed) + x);
-    return rnd;
-  }
-  
-  public float noiseFunction(float x, float y, float z){
-    //lets just start with a random color.
-    float rnd = frac(sin(dot(x, y, z, 12.9898f, 78.233f, 1116.156f)) * (43758.5453123f + seed + z) + x);
-    return rnd * 2.0 - 1.0f;
-  }
+
   
   
 }
