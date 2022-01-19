@@ -1,9 +1,9 @@
 final int SCREEN_SIZE = 1024;
 //final int STEP_COUNT = 256; //default: 256 steps
-final int LAYER_SIZE = 4096; //default: 256
+final int LAYER_SIZE = 256; //default: 256
 final int ATLAS_DIMENSION = 4096;
 //16 means 16 points, per noise grid.
-PerlinMaker3D pm = new PerlinMaker3D(4, 4, 4, 16, 44100);
+PerlinMaker3D pm = new PerlinMaker3D(4, 4, 4, 8, 44100);
 
 void setup() {
   size(1024, 1024);
@@ -21,7 +21,7 @@ void setup() {
     //float rads = TWO_PI / stepCount * i;
     //int seed = seedFromRad(rads);
     //noiseSeed(seed);
-    noiseInRange(offscreen, drawHeadX, drawHeadY, drawHeadX + LAYER_SIZE, drawHeadY + LAYER_SIZE, (i / (float)STEP_COUNT * 4.0f));
+    noiseInRange(offscreen, drawHeadX, drawHeadY, drawHeadX + LAYER_SIZE, drawHeadY + LAYER_SIZE, (i / (float)STEP_COUNT));
     drawIndex += 1;
     drawHeadX += LAYER_SIZE;
     if(drawIndex >= rowCount){
