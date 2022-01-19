@@ -3,7 +3,7 @@ class PerlinMaker3D{
   float lrX = 1.0;
   float lrY = 1.0;
   float lrZ = 1.0;
-  int scale = 16;
+  int scale = 1;
   float seed = 1.661;
   
   //ArrayList<PVector> gridPoints = new ArrayList<>();
@@ -28,91 +28,71 @@ class PerlinMaker3D{
     return (a1 - a0) * w + a0;
   }
   
-  private float interpFactor(float w){
+  private float smoothstep(float w){
     return ((w * (w * 6.0f - 15.0f) + 10.0f) * w * w * w);
   }
   
   
   public float noise(float x, float y, float z){
-    float loopX = x * this.scale % ((float)this.scale);
-    float loopY = y * this.scale % ((float)this.scale);
-    float loopZ = z * this.scale % ((float)this.scale);
+    float loopX = x * this.scale;
+    float loopY = y * this.scale;
+    float loopZ = z * this.scale;
     
+
     
-    //which one is closer?
-    int closerX = (int) round(loopX);
-    int closerY = (int) round(loopY);
-    int closerZ = (int) round(loopZ);
-    
-    int wrapX = closerX % this.scale;
-    int wrapY = closerY % this.scale;
-    int wrapZ = closerZ % this.scale;
-    
-    //find the vector
-    PVector currentPixelVector = new PVector(
-      loopX - closerX,
-      loopY - closerY,
-      loopZ - closerZ + 0.001f
-    );
-    
-    float noiseBase = noiseFunction(currentPixelVector, sphereVector(wrapX, wrapY, wrapZ));
-    return (noiseBase + 1.0f) / 2.0f;
-  }
-  /*
-  public float noise(float x, float y, float z){
-    //something feels off....
-    
-    float loopX = (x % this.lrX) * this.scale;
-    float loopY = (y % this.lrY) * this.scale;
-    float loopZ = (z % this.lrZ) * this.scale;
     int flooredX = (int) floor(loopX);
     int flooredY = (int) floor(loopY);
     int flooredZ = (int) floor(loopZ);
     
-    int ceiledX = flooredX + 1;
-    int ceiledY = flooredY + 1;
-    int ceiledZ = flooredZ + 1;
+    int ceiledX = (flooredX + 1);
+    int ceiledY = (flooredY + 1);
+    int ceiledZ = (flooredZ + 1);
     
     float fracX = loopX - flooredX;
     float fracY = loopY - flooredY;
     float fracZ = loopZ - flooredZ;
     
     
-    //and then, you need to interpolate cubic....
-    //or, in a more human way to say it:
-    //trilinear interpolation.
+    float interpX = smoothstep(fracX);
+    float interpY = smoothstep(fracY);
+    float interpZ = smoothstep(fracZ);
+   
+    //remember that this hasen't been normalized
+    //so you can essentially just do 1-x to flip the direction
+    PVector pos = new PVector(x, y, z);
+     
+    //whatever you do....
+    //compute gradient relative to fx, fy, fz
+    float gradFXFYFZ = noiseFunction(loopX, loopY, loopZ, flooredX, flooredY, flooredZ);
+    float gradCXFYFZ = noiseFunction(loopX, loopY, loopZ,  ceiledX, flooredY, flooredZ);
     
-    float xinterpFactor = interpFactor(fracX);
-    float yinterpFactor = interpFactor(fracY);
-    float zinterpFactor = interpFactor(fracZ);
-    //interpolate itx = fx, cx at fy fz
-    float fx_fy_fz = noiseFunction(flooredX, flooredY, flooredZ);
-    float cx_fy_fz = noiseFunction(ceiledX, flooredY, flooredZ);
-    float itx = interpolate(fx_fy_fz, cx_fy_fz, xinterpFactor);
-    
-    //interpolate itx2 = fx, cx at cy fz
-    float fx_cy_fz = noiseFunction(flooredX, ceiledY, flooredZ);
-    float cx_cy_fz = noiseFunction(ceiledX, ceiledY, flooredZ);
-    float itx2 = interpolate(fx_cy_fz, cx_cy_fz, xinterpFactor);
-    
-    float ity = interpolate(itx, itx2, yinterpFactor);
-    
-    //interpolate itx3 = fx, cx at fy cz
-    float fx_fy_cz = noiseFunction(flooredX, flooredY, ceiledZ);
-    float cx_fy_cz = noiseFunction(ceiledX, flooredY, ceiledZ);
-    float itx3 = interpolate(fx_fy_cz, cx_fy_cz, xinterpFactor);
-    //interpolate itx4 = fx, cx at cy cz
-    float fx_cy_cz = noiseFunction(flooredX, ceiledY, ceiledZ);
-    float cx_cy_cz = noiseFunction(ceiledX, ceiledY, ceiledZ);
-    float itx4 = interpolate(fx_cy_cz, cx_cy_cz, xinterpFactor);
-    
-    float ity2 = interpolate(itx3, itx4, yinterpFactor);
-    
-    //putting it together...
-    return interpolate(ity, ity2, zinterpFactor);
-  }*/
-  
+    //interpolate them two (save for later)
+    float gradFYFZ = interpolate(gradFXFYFZ, gradCXFYFZ, interpX);
 
+    //now, fx, cy, fz
+    float gradFXCYFZ = noiseFunction(loopX, loopY, loopZ,  flooredX, ceiledY, flooredZ);
+    float gradCXCYFZ = noiseFunction(loopX, loopY, loopZ, ceiledX, ceiledY, flooredZ);
+    
+    //interpolate (save for later)
+    float gradCYFZ = interpolate(gradFXCYFZ, gradCXCYFZ, interpX);
+    float gradFZ = interpolate(gradFYFZ, gradCYFZ, interpY);
+    
+    
+    //finally, fx, fy, cz
+    float gradFXFYCZ = noiseFunction(loopX, loopY, loopZ,  flooredX, flooredY, ceiledZ);
+    float gradCXFYCZ = noiseFunction(loopX, loopY, loopZ,  ceiledX, flooredY, ceiledZ);
+    
+    float gradFYCZ = interpolate(gradFXFYCZ, gradCXFYCZ, interpX);
+    
+    //interpolate (save for later)
+    float gradFXCYCZ = noiseFunction(loopX, loopY, loopZ,  flooredX, ceiledY, ceiledZ);
+    float gradCXCYCZ = noiseFunction(loopX, loopY, loopZ,  ceiledX, ceiledY, ceiledZ);
+    
+    float gradCYCZ = interpolate(gradFXCYCZ, gradCXCYCZ, interpX);
+    float gradCZ = interpolate(gradFYCZ, gradCYCZ, interpY);
+    
+    return (interpolate(gradFZ, gradCZ, interpZ) + 1.0) / 2.0f;
+  }
   
   private float frac(float input){
     return input - floor(input);
@@ -126,8 +106,17 @@ class PerlinMaker3D{
     return x * x2 + y * y2;
   }
   
-  public float noiseFunction(PVector v1, PVector v2){
-    return v1.normalize().dot(v2.normalize());
+  
+  public float noiseFunction(float px, float py, float pz, int x, int y, int z){
+    float fx = px - (float)x;
+    float fy = py - (float)y;
+    float fz = pz - (float)z;
+    
+    //then....
+    //get a sphereVector!
+    PVector sphere = sphereVector(x % this.scale, y % this.scale, z % this.scale);
+    
+    return fx * sphere.x + fy * sphere.y + fz * sphere.z;
   }
   
   /*
@@ -136,6 +125,8 @@ class PerlinMaker3D{
   }
   */
   
+  
+  
   public PVector sphereVector(int x, int y, int z){
     float rnd = noiseFunction(x, y, z);
     PVector outVector = hemisphereVector(x, y, z);
@@ -143,11 +134,11 @@ class PerlinMaker3D{
       return outVector;
     }
     else{
-      outVector.x = -outVector.x;
+      /*outVector.x = -outVector.x;
       outVector.y = -outVector.y;
       outVector.z = -outVector.z;
-      return outVector;
-      //return outVector.mult(-1); // reverse direction
+      return outVector;*/
+      return outVector.mult(-1); // reverse direction
     }
   }
   
@@ -158,7 +149,7 @@ class PerlinMaker3D{
     float out_x = cos(phi) * sin_t;
     float out_y = sin(phi) * sin_t;
     float out_z = cos_t;
-    return new PVector(out_x, out_y, out_z + 0.001).normalize();
+    return new PVector(out_x, out_y, out_z);
   }
   
     
