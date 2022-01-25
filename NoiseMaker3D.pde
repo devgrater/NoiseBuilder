@@ -29,6 +29,10 @@ class NoiseMaker3D{
     return this;
   }
   
+  public NoiseMaker3D setFlipped(){
+    return setFlipped(true);
+  }
+  
   public String getMakerName(){
     return this.name;
   }
@@ -43,6 +47,14 @@ class NoiseMaker3D{
   
   public float noise(float x, float y, float z){
     return 0.0f;
+  }
+  
+  public color coloredNoise(float x, float y, float z){
+    return color((int)floor(noise(x, y, z) * 255));
+  }
+  
+  public int toIntColor(float floatColor){
+    return (int)floor(floatColor * 255);
   }
   
   

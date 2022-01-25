@@ -15,15 +15,17 @@ class NoiseMakerComposite extends NoiseMaker3D{
   public float noise(float x, float y, float z){
     float noiseCompo = 0.0f;
     float weight = 1.0f;
+    float weightSum = 0.0f;
     for(int i = 0; i < noiseMakers.size(); i++){
       weight *= 0.5f;
+      weightSum += weight;
       noiseCompo += weight * noiseMakers.get(i).noise(x, y, z);
     }
     if(this.flipped){
-      return 1 - noiseCompo;
+      return (1 - noiseCompo) / weightSum;
     }
     else{
-      return noiseCompo;
+      return noiseCompo / weightSum;
     }
   }
 }

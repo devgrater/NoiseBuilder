@@ -4,13 +4,20 @@ final int LAYER_SIZE = 256; //default: 256
 final int ATLAS_DIMENSION = 4096;
 final int GRID_SIZE = 8;
 //16 means 16 points, per noise grid.
+/*
 NoiseMaker3D pm = new NoiseMakerComposite()
-  .add(new VoronoiMaker3D().setScale(3).setSeed(1212.1).setFlipped(true).initialize())
-  .add(new VoronoiMaker3D().setScale(5).setSeed(24212.1).setFlipped(true).initialize())
-  .add(new VoronoiMaker3D().setScale(7).setSeed(24212.1).setFlipped(true).initialize())
-  .add(new PerlinMaker3D().setScale(9).setSeed(4412.1).initialize())
-  .add(new PerlinMaker3D().setScale(14).setSeed(12132.1).initialize())
-  .add(new PerlinMaker3D().setScale(20).setSeed(1232.1).initialize());
+  .add(new VoronoiMaker3D().setScale(16).setSeed(1212.1).initialize())
+  .add(new VoronoiMaker3D().setScale(24).setSeed(1412.1).initialize())
+  .add(new VoronoiMaker3D().setScale(32).setSeed(1552.1).initialize())
+  .add(new VoronoiMaker3D().setScale(48).setSeed(1132.1).initialize());
+  //.add(new VoronoiMaker3D().setScale(8).setSeed(4412.1).setFlipped(true).initialize())
+  //.add(new PerlinMaker3D().setScale(4).setSeed(12132.1).initialize())
+  //.add(new PerlinMaker3D().setScale(8).setSeed(1232.1).initialize());*/
+  
+NoiseMaker3D pm = new NoiseMakerMultiChannel()
+  .setR(new VoronoiMaker3D().setScale(16).setSeed(1212.1).setFlipped().initialize())
+  .setG(new VoronoiMaker3D().setScale(24).setSeed(1412.1).setFlipped().initialize())
+  .setB(new VoronoiMaker3D().setScale(32).setSeed(1612.1).setFlipped().initialize());
 
 int step_val;
 int drawHeadX = 0;
@@ -34,7 +41,9 @@ void draw(){
   if(step_val >= STEP_COUNT){
     //stop drawing!
     if(!hasStopped){
-      offscreen.save(pm.getMakerName() + "3D" + "_" + GRID_SIZE + ".png");
+      String saveName = pm.getMakerName() + "3D" + "_" + GRID_SIZE + ".png";
+      offscreen.save(saveName);
+      print("File saved as " + saveName);
       hasStopped = true;
     }
   }
@@ -64,9 +73,9 @@ void noiseInRange(PImage image, int startX, int startY, int endX, int endY, floa
     for(int y = startY; y < endY; y++){
       float localX = (x - startX) / ((float)(endX - startX));
       float localY = (y - startY) / ((float)(endY - startY));
-      float noiseVal = pm.noise(localX, localY, z);//noise(localX, localY, z);
-      int pColor = (int)floor(noiseVal * 256);
-      image.pixels[y * imageWidth + x] = color(pColor);
+      color noiseVal = pm.coloredNoise(localX, localY, z);//noise(localX, localY, z);
+      //int pColor = (int)floor(noiseVal * 256);
+      image.pixels[y * imageWidth + x] = noiseVal;
     }
   }
 }
