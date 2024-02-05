@@ -2,7 +2,7 @@ class CellMaker3D extends NoiseMaker3D{
   
     
   private ArrayList<PVector> pointCloud; 
-  private ArrayList<Float> pval;
+  private ArrayList<PVector> pval;
   
   
   public CellMaker3D(){
@@ -25,7 +25,7 @@ class CellMaker3D extends NoiseMaker3D{
         for(int k = 0; k < scale; k++){
           //PVector scatter = getRandomScatter(i, j, k);
           pointCloud.add(new PVector(random(0,1), random(0,1), random(0,1)));
-          pval.add(random(0, 1));
+          pval.add(new PVector(random(0,1), random(0,1), random(0,1)));
         }
       }
     }
@@ -43,7 +43,7 @@ class CellMaker3D extends NoiseMaker3D{
     return pointCloud.get(index);
   }
   
-  private float getNoiseValAt(int x, int y, int z){
+  private PVector getNoiseValAt(int x, int y, int z){
     //wrap around if that happens
     x = (x + this.scale) % this.scale;
     y = (y + this.scale) % this.scale;
@@ -67,12 +67,30 @@ class CellMaker3D extends NoiseMaker3D{
     int ceiledY = (flooredY + 1);
     int ceiledZ = (flooredZ + 1);
     
-    return nearestDistance(flooredX - 1, flooredY - 1, flooredZ - 1, ceiledX, ceiledY, ceiledZ, loopX, loopY, loopZ);
+    return nearestDistance(flooredX - 1, flooredY - 1, flooredZ - 1, ceiledX, ceiledY, ceiledZ, loopX, loopY, loopZ).x;
   }
   
-  private float nearestDistance(int fx, int fy, int fz, int cx, int cy, int cz, float x, float y, float z){
+  @Override
+  public color coloredNoise(float x, float y, float z){
+    float loopX = x * this.scale;
+    float loopY = y * this.scale;
+    float loopZ = z * this.scale;
+    
+    int flooredX = (int) floor(loopX);
+    int flooredY = (int) floor(loopY);
+    int flooredZ = (int) floor(loopZ);
+    
+    int ceiledX = (flooredX + 1);
+    int ceiledY = (flooredY + 1);
+    int ceiledZ = (flooredZ + 1);
+    
+    PVector v = nearestDistance(flooredX - 1, flooredY - 1, flooredZ - 1, ceiledX, ceiledY, ceiledZ, loopX, loopY, loopZ);
+    return color(toIntColor(v.x), toIntColor(v.y), toIntColor(v.z));
+  }
+  
+  private PVector nearestDistance(int fx, int fy, int fz, int cx, int cy, int cz, float x, float y, float z){
     float minDistance = this.scale; //you can never go beyond this distance, no matter what.
-    float minColor = 0;
+    PVector minColor = new PVector(0, 0, 0);
     for(int xId = fx; xId <= cx; xId += 1){
       for(int yId = fy; yId <= cy; yId += 1){
         for(int zId = fz; zId <= cz; zId += 1){
@@ -86,7 +104,7 @@ class CellMaker3D extends NoiseMaker3D{
       }
     }
     if(this.flipped){
-      return 1 - minColor;
+      return new PVector(1, 1, 1).sub(minColor);
     }
     else{
       return minColor;

@@ -14,11 +14,13 @@ NoiseMaker3D pm = new NoiseMakerComposite()
   //.add(new PerlinMaker3D().setScale(4).setSeed(12132.1).initialize())
   //.add(new PerlinMaker3D().setScale(8).setSeed(1232.1).initialize());*/
   
-NoiseMaker3D pm = new NoiseMakerMultiChannel()
+NoiseMaker3D pm = new CellMaker3D().setScale(16).setSeed(1212.1).setFlipped().initialize();
+
+/*new NoiseMakerMultiChannel()
   .setR(new CellMaker3D().setScale(16).setSeed(1212.1).setFlipped().initialize())
-  .setG(new CellMaker3D().setScale(24).setSeed(1412.1).setFlipped().initialize())
-  .setB(new CellMaker3D().setScale(32).setSeed(1612.1).setFlipped().initialize())
-  .setFileName("CellNoise_01");
+  .setG(new CellMaker3D().setScale(16).setSeed(1412.1).setFlipped().initialize())
+  .setB(new CellMaker3D().setScale(16).setSeed(1612.1).setFlipped().initialize())
+  .setFileName("CellNoise_01");*/
 
 int step_val;
 int drawHeadX = 0;
