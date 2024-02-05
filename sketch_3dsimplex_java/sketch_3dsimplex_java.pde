@@ -15,9 +15,9 @@ NoiseMaker3D pm = new NoiseMakerComposite()
   //.add(new PerlinMaker3D().setScale(8).setSeed(1232.1).initialize());*/
   
 NoiseMaker3D pm = new NoiseMakerMultiChannel()
-  .setR(new VoronoiMaker3D().setScale(16).setSeed(1212.1).setFlipped().initialize())
-  .setG(new VoronoiMaker3D().setScale(24).setSeed(1412.1).setFlipped().initialize())
-  .setB(new VoronoiMaker3D().setScale(32).setSeed(1612.1).setFlipped().initialize());
+  .setR(new CellMaker3D().setScale(16).setSeed(1212.1).setFlipped().initialize())
+  .setG(new CellMaker3D().setScale(24).setSeed(1412.1).setFlipped().initialize())
+  .setB(new CellMaker3D().setScale(32).setSeed(1612.1).setFlipped().initialize());
 
 int step_val;
 int drawHeadX = 0;
