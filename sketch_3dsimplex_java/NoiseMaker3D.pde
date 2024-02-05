@@ -4,6 +4,16 @@ class NoiseMaker3D{
   float seed = 1.661;
   boolean flipped = false;
   protected String name = "Generic";
+  String saveFileName = "generic_01";
+  
+  public NoiseMaker3D setFileName(String filename){
+    saveFileName = filename;
+    return this;
+  }
+  
+  public String getFileName(){
+    return this.saveFileName; 
+  }
   
   public NoiseMaker3D(){
     

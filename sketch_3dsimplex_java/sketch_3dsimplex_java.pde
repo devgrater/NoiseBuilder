@@ -1,6 +1,6 @@
 final int SCREEN_SIZE = 768;
 //final int STEP_COUNT = 256; //default: 256 steps
-final int LAYER_SIZE = 512; //default: 256
+final int LAYER_SIZE = 4096; //default: 256
 final int ATLAS_DIMENSION = 4096;
 final int GRID_SIZE = 8;
 //16 means 16 points, per noise grid.
@@ -17,7 +17,8 @@ NoiseMaker3D pm = new NoiseMakerComposite()
 NoiseMaker3D pm = new NoiseMakerMultiChannel()
   .setR(new CellMaker3D().setScale(16).setSeed(1212.1).setFlipped().initialize())
   .setG(new CellMaker3D().setScale(24).setSeed(1412.1).setFlipped().initialize())
-  .setB(new CellMaker3D().setScale(32).setSeed(1612.1).setFlipped().initialize());
+  .setB(new CellMaker3D().setScale(32).setSeed(1612.1).setFlipped().initialize())
+  .setFileName("CellNoise_01");
 
 int step_val;
 int drawHeadX = 0;
@@ -45,7 +46,7 @@ void draw(){
   if(step_val >= STEP_COUNT){
     //stop drawing!
     if(!hasStopped){
-      String saveName = pm.getMakerName() + "3D" + "_" + GRID_SIZE + ".png";
+      String saveName = pm.getFileName() + ".png";
       offscreen.save(saveName);
       print("File saved as " + saveName);
       hasStopped = true;
