@@ -85,6 +85,11 @@ class CellMaker3D extends NoiseMaker3D{
     int ceiledZ = (flooredZ + 1);
     
     PVector v = nearestDistance(flooredX - 1, flooredY - 1, flooredZ - 1, ceiledX, ceiledY, ceiledZ, loopX, loopY, loopZ);
+    if(normalized){
+      v = v.sub(new PVector(0.5, 0.5, 0.5)).normalize(); 
+      v = v.add(new PVector(1, 1, 1)).mult(0.5);
+    }
+    
     return color(toIntColor(v.x), toIntColor(v.y), toIntColor(v.z));
   }
   

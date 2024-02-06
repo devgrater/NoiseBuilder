@@ -3,8 +3,18 @@ class NoiseMaker3D{
   int scale = 1;
   float seed = 1.661;
   boolean flipped = false;
+  boolean normalized = false;
   protected String name = "Generic";
   String saveFileName = "generic_01";
+  PImage buffer = null;
+  
+  
+  public PImage GetBuffer(int sx, int sy){
+    if(buffer == null){
+      buffer = createImage(4096, 4096, RGB);
+    }
+    return buffer;
+  }
   
   public NoiseMaker3D setFileName(String filename){
     saveFileName = filename;
@@ -42,6 +52,17 @@ class NoiseMaker3D{
   public NoiseMaker3D setFlipped(){
     return setFlipped(true);
   }
+  
+  public NoiseMaker3D setNormalized(boolean normalized){
+    this.normalized = normalized;
+    return this;
+  }
+  
+  public NoiseMaker3D setNormalized(){
+    return setNormalized(true);
+  }
+  
+  
   
   public String getMakerName(){
     return this.name;

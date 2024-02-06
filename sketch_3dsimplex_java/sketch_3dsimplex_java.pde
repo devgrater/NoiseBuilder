@@ -14,7 +14,7 @@ NoiseMaker3D pm = new NoiseMakerComposite()
   //.add(new PerlinMaker3D().setScale(4).setSeed(12132.1).initialize())
   //.add(new PerlinMaker3D().setScale(8).setSeed(1232.1).initialize());*/
   
-NoiseMaker3D pm = new CellMaker3D().setScale(16).setSeed(1212.1).setFlipped().initialize();
+NoiseMaker3D pm = new CellMaker3D().setScale(16).setSeed(1212.1).setNormalized(true).initialize();
 
 /*new NoiseMakerMultiChannel()
   .setR(new CellMaker3D().setScale(16).setSeed(1212.1).setFlipped().initialize())
